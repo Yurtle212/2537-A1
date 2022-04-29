@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>A1 PokeAPI Search</title>
+        <link rel="stylesheet" href="index.css">
+    </head>
+    <body> 
+        <div id="content">
+            <header>
+                <h1><a href="../index.html">PokeAPI Client</a></h1>
+                <form action="pokemon.html">
+                    <input type="text" id="search" name="search" placeholder="Search..." value="" />
+                    <button type="button" onclick="window.search()">Search</button>
+                </form>
+            </header>
+            <div id="pokemons">
+                <div class="pokemonContainer" onclick="search(this.querySelector('.pokemonName').innerHTML)">
+                    <h2 class="pokemonName"></h2>
+                    <img class="pokemonArt"/>
+                    <div class="pokemonStats">
+                        <div class="types">
+                            <p class="type">TYPE: </p><br><br>
+                        </div>
+                        <p class="hp">HP: </p>
+                        <p class="att">ATT: </p>
+                        <p class="def">DEF: </p>
+                        <p class="sat">SAT: </p>
+                        <p class="spd">SPD: </p>
+                    </div>
+                </div>
+                <div class="pokemonContainer" onclick="search(this.querySelector('.pokemonName').innerHTML)">
+                    <h2 class="pokemonName"></h2>
+                    <img class="pokemonArt"/>
+                    <div class="pokemonStats">
+                        <div class="types">
+                            <p class="type">TYPE: </p><br><br>
+                        </div>
+                        <p class="hp">HP: </p>
+                        <p class="att">ATT: </p>
+                        <p class="def">DEF: </p>
+                        <p class="sat">SAT: </p>
+                        <p class="spd">SPD: </p>
+                    </div>
+                </div>
+                <div class="pokemonContainer" onclick="search(this.querySelector('.pokemonName').innerHTML)">
+                    <h2 class="pokemonName"></h2>
+                    <img class="pokemonArt"/>
+                    <div class="pokemonStats">
+                        <div class="types">
+                            <p class="type">TYPE: </p><br><br>
+                        </div>
+                        <p class="hp">HP: </p>
+                        <p class="att">ATT: </p>
+                        <p class="def">DEF: </p>
+                        <p class="sat">SAT: </p>
+                        <p class="spd">SPD: </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
