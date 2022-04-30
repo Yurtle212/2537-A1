@@ -3,6 +3,7 @@
     <head>
         <title>A1 PokeAPI</title>
         <link rel="stylesheet" href="index.css">
+        <link rel="stylesheet" href="loader.css">
     </head>
     <body>
         <div id="content">
@@ -24,6 +25,7 @@
                 </form>
             </header>
             <div id="pokemons">
+            <div class="lds-spinner"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
             <template id="pokemonContainerTemplate">
                 <div class="pokemonContainer" onclick="search(this.querySelector('.pokemonName').innerHTML)">
                     <h2 class="pokemonName"></h2>
@@ -52,10 +54,16 @@
                 window.location.assign("./pokemon.html?search=" + pokerman);
             }
 
+            function toggleLoader(enabled) {
+                const loader = document.querySelector(".lds-spinner");
+                loader.setAttribute("style", "display: " + (enabled ? "block" : "none") + ";");
+            }
+
             function fillRandomPokemons() {
                 response = getRandomPokemon();
 
                 let parent = document.querySelector("#pokemons");
+                toggleLoader(false);
                 for (let i = 0; i < 9; i++) {
                     response = getRandomPokemon();
                     addPokemon(parent, response);
@@ -65,7 +73,9 @@
             function purgePokemon(parent) {
                 const nodes = document.querySelectorAll(".pokemonContainer");
                 for (let i = 0; i < nodes.length; i++) {
-                    parent.removeChild(nodes[i]);
+                    if (nodes[i].className != "lds-spinner") {
+                        parent.removeChild(nodes[i]);
+                    }
                 }
             }
 
@@ -125,6 +135,7 @@
             async function displayFiltered() {
                 const parent = document.querySelector("#pokemons");
                 purgePokemon(parent);
+                toggleLoader(true);
 
                 let flag = getFlag("#type", "#ability", "#move");
 
@@ -153,6 +164,7 @@
                 let pIntersect = []
                 pIntersect = getListIntersect(allPokemonType, allPokemonAbility, allPokemonMove);
 
+                toggleLoader(false);
                 for (let i = 0; i < pIntersect.length; i++) {
                     await addPokemon(parent, pIntersect[i]);
                 }

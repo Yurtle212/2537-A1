@@ -57,6 +57,31 @@ function getPokemonsByMove(move) {
     return res["learned_by_pokemon"];
 }
 
+function getMoveType(move) {
+    return new Promise(resolve => {
+        async function doIt() {
+            let res = await getRequestAsync("https://pokeapi.co/api/v2/move/" + move);
+            resolve(await getRequestAsync(res["type"]["url"]));
+        }
+        doIt();
+    });
+}
+
+function getAbilityDescription(url) {
+    return new Promise(resolve => {
+        async function doIt() {
+            let res = await getRequestAsync(url);
+            console.log(res);
+            for (let i = 0; i < res.flavor_text_entries.length; i++) {
+                if (res.flavor_text_entries[i].language.name == "en") {
+                    resolve(res.flavor_text_entries[i].flavor_text);
+                }
+            }
+        }
+        doIt();
+    });
+}
+
 function getTypeColour(type) {
     const colourDict = {
         "bug": "9cac1e",
@@ -79,6 +104,5 @@ function getTypeColour(type) {
         "water": "4091de",
         "unknown": "68a090"
     }
-
     return "#" + colourDict[type.toLowerCase()];
 }
