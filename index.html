@@ -237,10 +237,11 @@
             let allPokemonAbility = [];
 
             window.onload = function() {
-                if (document.querySelector("#type").value == "null") {
+                if (document.querySelector("#type").value == "null" && document.querySelector("#ability").value == "null") {
                     fillRandomPokemons();
                 } else {
                     displayByType();
+                    displayByAbility();
                 }
             }
         </script>

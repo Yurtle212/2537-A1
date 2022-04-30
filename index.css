@@ -19,6 +19,7 @@ header form {
     display: flex;
     justify-content: center;
     align-content: center;
+    gap: 1%;
 }
 
 form #search {
@@ -33,6 +34,10 @@ form button {
     color: white;
     background-color: #5769d2;
     border-color: #ffffff;
+}
+
+form select {
+    border-radius: 10px;
 }
 
 #content {
