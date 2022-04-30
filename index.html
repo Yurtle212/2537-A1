@@ -117,7 +117,6 @@
 
             function purgePokemon(parent) {
                 const nodes = document.querySelectorAll(".pokemonContainer");
-                console.log(nodes);
                 for (let i = 0; i < nodes.length; i++) {
                     parent.removeChild(nodes[i]);
                 }
@@ -141,24 +140,67 @@
                 parent.appendChild(template)
             }
 
+            function getListIntersect(a1, a2) {
+                return a1.filter(p => a2.map((a) => a.species.name).includes(p.species.name));
+            }
+
             async function displayByType() {
                 const parent = document.querySelector("#pokemons");
+
+                if (document.querySelector("#type").value == "null") { 
+                    allPokemonType = [];
+                    if (document.querySelector("#ability").value == "null") {
+                        window.location.reload();
+                        return;
+                    } else {
+                        displayByAbility();
+                        return;
+                    }
+                }
+
                 let response = getPokemonsByType(document.querySelector("#type").value);
                 purgePokemon(parent);
 
+                allPokemonType = [];
                 for (let i = 0; i < response.length; i++) {
-                    addPokemon(parent, getRequest(response[i]["pokemon"]["url"]));
+                    allPokemonType.push(getRequest(response[i]["pokemon"]["url"]));
+                }
+
+                let pIntersect = []
+                pIntersect = allPokemonAbility.length == 0 ? allPokemonType : getListIntersect(allPokemonType, allPokemonAbility);
+
+                for (let i = 0; i < pIntersect.length; i++) {
+                    addPokemon(parent, pIntersect[i]);
                 }
             }
 
             async function displayByAbility() {
                 const parent = document.querySelector("#pokemons");
+
+                if (document.querySelector("#ability").value == "null") { 
+                    allPokemonAbility = [];
+                    if (document.querySelector("#type").value == "null") {
+                        window.location.reload();
+                        return;
+                    } else {
+                        displayByType();
+                        return;
+                    }
+                }
+
                 let response = getPokemonsByAbility(document.querySelector("#ability").value);
-                console.log(response)
                 purgePokemon(parent);
 
+                allPokemonAbility = [];
                 for (let i = 0; i < response.length; i++) {
-                    addPokemon(parent, getRequest(response[i]["pokemon"]["url"]));
+                    allPokemonAbility.push(getRequest(response[i]["pokemon"]["url"]));
+                }
+
+                let pIntersect = []
+                pIntersect = allPokemonType.length == 0 ? allPokemonAbility : getListIntersect(allPokemonType, allPokemonAbility);
+
+                for (let i = 0; i < pIntersect.length; i++) {
+                    addPokemon(parent, pIntersect[i]);
                 }
             }
 
@@ -180,6 +222,7 @@
             }
 
             function toTitleCase(str) {
+                // Didn't want to figure this out myself, https://stackoverflow.com/a/40111894
                 return str.toLowerCase().replace(/\b(\w)/g, s => s.toUpperCase());
             }
 
@@ -190,13 +233,15 @@
             populateSelector(document.querySelector("#ability"), "https://pokeapi.co/api/v2/ability/?limit=999");
             populateSelector(document.querySelector("#type"), "https://pokeapi.co/api/v2/type/?limit=999");
 
+            let allPokemonType = [];
+            let allPokemonAbility = [];
+
             window.onload = function() {
                 if (document.querySelector("#type").value == "null") {
                     fillRandomPokemons();
                 } else {
                     displayByType();
                 }
-                console.log(document.querySelector("#type").value)
             }
         </script>
     </body>
