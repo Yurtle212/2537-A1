@@ -22,6 +22,10 @@
                     
                     <input type="text" id="search" name="search" placeholder="Search by name..." value="" />
                     <button type="submit">Search</button>
+
+                    <select name="history" id="history" onchange="loadSearch();">
+                        <option value="null">History</option>
+                    </select>
                 </form>
             </header>
             <div id="pokemons">
@@ -45,6 +49,43 @@
         <script src="./pokeApiStuff.js"></script>
         <script src="./misc.js"></script>
         <script>
+            class searchHistory {
+                constructor(ability, move, type) {
+                    this.ability = ability;
+                    this.move = move;
+                    this.type = type;
+                }
+            }
+
+            let SearchHistory = {}
+
+            function saveSearch() {
+                const history = document.querySelector("#history");
+                let newSearchEntry = document.createElement("option");
+                let entry = new searchHistory(document.querySelector("#ability").value, document.querySelector("#move").value, document.querySelector("#type").value);
+                let date = (new Date());
+                let ts = Math.round(date.getTime() / 1000);
+                SearchHistory[ts] = entry;
+                
+                newSearchEntry.setAttribute("value", ts);
+                newSearchEntry.innerHTML = String(date.getHours() == 0 || date.getHours() == 12 ? 12 : date.getHours() % 12).padStart(2, '0') + ":" + String(date.getMinutes()).padStart(2, '0') + ":" + String(date.getSeconds()).padStart(2, '0');
+                history.appendChild(newSearchEntry);
+                history.value = ts;
+            }
+
+            function loadSearch() {
+                const history = document.querySelector("#history");
+                if (history.value == null) {
+                    return;
+                }
+
+                let entry = SearchHistory[history.value];
+                document.querySelector("#ability").value = entry.ability;
+                document.querySelector("#move").value = entry.move;
+                document.querySelector("#type").value = entry.type;
+                displayFiltered();
+            }
+
             function search() {
                 if (document.querySelector("#search").value == "") { return; }
                 window.location.assign("./pokemon.html?search=" + document.querySelector("#search").value);
@@ -136,6 +177,7 @@
                 const parent = document.querySelector("#pokemons");
                 purgePokemon(parent);
                 toggleLoader(true);
+                saveSearch();
 
                 let flag = getFlag("#type", "#ability", "#move");
 
