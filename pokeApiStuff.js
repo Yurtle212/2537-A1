@@ -8,6 +8,17 @@ function getRequest(url) {
     return JSON.parse(xmlHttp.responseText);
 }
 
+async function getRequestAsync(url) {
+    return new Promise(resolve => {
+        let xmlHttp = new XMLHttpRequest();
+        xmlHttp.open("GET", url, true);
+        xmlHttp.onload = function (e) {
+            resolve(JSON.parse(xmlHttp.responseText));
+        }
+        xmlHttp.send(null);
+    });
+}
+
 function getRandomPokemon() {
     const pokemonAmount = 898;
     let res = getRequest("https://pokeapi.co/api/v2/pokemon/" + Math.floor(Math.random() * pokemonAmount));

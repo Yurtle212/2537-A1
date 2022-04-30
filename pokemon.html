@@ -12,8 +12,8 @@
         <header>
             <h1><a href="../index.html">PokeAPI Client</a></h1>
             <form action="pokemon.html">
-                <input type="text" id="search" name="search" placeholder="Search..." value="" />
-                <button type="button" onclick="window.search()">Search</button>
+                <input type="text" id="search" name="search" placeholder="Search by name..." value="" />
+                <button type="submit">Search</button>
             </form>
         </header>
 
@@ -38,6 +38,7 @@
     </div>
 
     <script src="./pokeApiStuff.js"></script>
+    <script src="./misc.js"></script>
     <script>
         function search() {
             if (document.querySelector("#search").value == "") { return; }

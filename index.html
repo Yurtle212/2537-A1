@@ -41,6 +41,7 @@
             </footer>
         </div>
         <script src="./pokeApiStuff.js"></script>
+        <script src="./misc.js"></script>
         <script>
             function search() {
                 if (document.querySelector("#search").value == "") { return; }
@@ -69,15 +70,18 @@
             }
 
             function addPokemon(parent, pokemon) {
-                let template = document.querySelector("#pokemonContainerTemplate").content.cloneNode(true);
+                return new Promise(resolve => {
+                    let template = document.querySelector("#pokemonContainerTemplate").content.cloneNode(true);
                 
-                template.querySelector(".pokemonArt").setAttribute("src", getPokemonArtUrl(pokemon));
-                template.querySelector(".pokemonName").innerHTML = getPokemonName(pokemon);
+                    template.querySelector(".pokemonArt").setAttribute("src", getPokemonArtUrl(pokemon));
+                    template.querySelector(".pokemonName").innerHTML = getPokemonName(pokemon);
 
-                let typesDiv = template.querySelector(".types");
+                    let typesDiv = template.querySelector(".types");
 
-                fillTypes(typesDiv, pokemon);
-                parent.appendChild(template);
+                    fillTypes(typesDiv, pokemon);
+                    parent.appendChild(template);
+                    resolve(true);
+                });
             }
 
             function fillTypes(parent, pokemon) {
@@ -121,7 +125,7 @@
             async function displayFiltered() {
                 const parent = document.querySelector("#pokemons");
                 purgePokemon(parent);
-                
+
                 let flag = getFlag("#type", "#ability", "#move");
                 console.log(flag & 0b010);
 
@@ -131,16 +135,16 @@
                 }
 
                 if ((flag & 0b001) != 0) { // Type
-                    console.log("Type");
-                    getTypePokemon();
+                    //console.log("Type");
+                    await getTypePokemon();
                 }
                 if ((flag & 0b010) != 0) { // Ability
-                    console.log("Ability");
-                    getAbilityPokemon();
+                    //console.log("Ability");
+                    await getAbilityPokemon();
                 }
                 if ((flag & 0b100) != 0) { // Move
-                    console.log("Move");
-                    getMovePokemon();
+                    //console.log("Move");
+                    await getMovePokemon();
                 }
 
 
@@ -148,64 +152,60 @@
                 pIntersect = getListIntersect(allPokemonType, allPokemonAbility, allPokemonMove);
 
                 for (let i = 0; i < pIntersect.length; i++) {
-                    addPokemon(parent, pIntersect[i]);
+                    await addPokemon(parent, pIntersect[i]);
                 }
+                console.log("Burh");
             }
 
-            async function getMovePokemon() {
-                let response = getPokemonsByMove(document.querySelector("#move").value);
+            function getMovePokemon() {
+                return new Promise(resolve => {
+                    async function doStuff() {
+                        console.log("Move")
+                        let response = getPokemonsByMove(document.querySelector("#move").value);
 
-                allPokemonMove = [];
-                for (let i = 0; i < response.length; i++) {
-                    allPokemonMove.push(getRequest(response[i]["url"]));
-                }
+                        allPokemonMove = [];
+                        for (let i = 0; i < response.length; i++) {
+                            allPokemonMove.push(await getRequestAsync(response[i]["url"]));
+                        }
+                        resolve(true);
+                    }
+                    doStuff();
+                });
             }
 
-            async function getTypePokemon() {
-                console.log
-                let response = getPokemonsByType(document.querySelector("#type").value);
+            function getTypePokemon() {
+                return new Promise(resolve => {
+                    async function doStuff() {
+                        console.log("Type")
+                        let response = getPokemonsByType(document.querySelector("#type").value);
 
-                allPokemonType = [];
-                for (let i = 0; i < response.length; i++) {
-                    allPokemonType.push(getRequest(response[i]["pokemon"]["url"]));
-                }
+                        allPokemonType = [];
+                        for (let i = 0; i < response.length; i++) {
+                            allPokemonType.push(await getRequestAsync(response[i]["pokemon"]["url"]));
+                            //allPokemonType.push(getRequest(response[i]["pokemon"]["url"]));
+                        }
+                        resolve(true);
+                    }
+                    doStuff();
+                });
             }
 
-            async function getAbilityPokemon() {
-                let response = getPokemonsByAbility(document.querySelector("#ability").value);
+            function getAbilityPokemon() {
+                return new Promise(resolve => {
+                    async function doStuff() {
+                        console.log("Ability")
+                        let response = getPokemonsByAbility(document.querySelector("#ability").value);
 
-                allPokemonAbility = [];
-                for (let i = 0; i < response.length; i++) {
-                    allPokemonAbility.push(getRequest(response[i]["pokemon"]["url"]));
-                }
+                        allPokemonAbility = [];
+                        for (let i = 0; i < response.length; i++) {
+                            allPokemonAbility.push(await getRequestAsync(response[i]["pokemon"]["url"]));
+                        }
+                        resolve(true);
+                    }
+                    doStuff();
+                });
             }
-
-            function populateSelector(parent, url) {
-                const response = getRequest(url);
-
-                let allEntries = [];
-                for (let i = 0; i < response.count; i++) {
-                    allEntries.push(response["results"][i]);
-                }
-                allEntries.sort(compareThings);
-
-                for (let i = 0; i < allEntries.length; i++) {
-                    let newNode = document.createElement("option");
-                    newNode.value = allEntries[i].name;
-                    newNode.innerHTML = toTitleCase(allEntries[i].name);
-                    parent.appendChild(newNode);
-                }
-            }
-
-            function toTitleCase(str) {
-                // Didn't want to figure this out myself, https://stackoverflow.com/a/40111894
-                return str.toLowerCase().replace(/\b(\w)/g, s => s.toUpperCase());
-            }
-
-            function compareThings(t1, t2) {
-                return t1.name.localeCompare(t2.name);
-            }
-
+            
             populateSelector(document.querySelector("#ability"), "https://pokeapi.co/api/v2/ability/?limit=9999");
             populateSelector(document.querySelector("#type"), "https://pokeapi.co/api/v2/type/?limit=9999");
             populateSelector(document.querySelector("#move"), "https://pokeapi.co/api/v2/move/?limit=9999");
