@@ -20,6 +20,10 @@
     padding: 1%;
 }
 
+form div {
+    width: 100%;
+}
+
 .pokemonStats {
     font-weight: 500;
 }
@@ -89,4 +93,43 @@
 
 ::-webkit-scrollbar-corner {
     background: #00000000;
+}
+
+@media screen and (max-width: 750px) {
+    .pokemonContainer {
+        grid-template-columns: 100%;
+        grid-template-rows: 60% 40% ;
+    }
+
+    img {
+        max-width: 40%;
+        object-fit: cover;
+    }
+
+    #left {
+        max-height: 50%;
+    }
+
+    .pokemonStats {
+        display: flex;
+        flex-direction: row;
+        gap: 5%;
+        justify-content: space-around;
+        flex-wrap: wrap;
+    }
+
+    .pokemonStats p {
+        border-radius: 5px;
+        border-color: #1f2548;
+        border-style: solid;
+        border-width: 1px;
+        background-color: #efc30a;
+        padding-left: .5ch;
+        padding-right: .5ch;
+    }
+
+    #right {
+        grid-row: 2;
+        grid-column: 1;
+    }
 }

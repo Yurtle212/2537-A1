@@ -147,3 +147,28 @@ option {
 ::-webkit-scrollbar-thumb:hover {
   background: #9c7d00;
 }
+
+::-webkit-scrollbar-corner {
+    background: #00000000;
+}
+
+@media screen and (max-width: 1000px) {
+    header form {
+        flex-direction: column;
+        justify-content: space-around;
+    }
+
+    header form * {
+        height: 40px;
+    }
+
+    form #search {
+        width: 80%;
+        height: 25px;
+        border-radius: 10px;
+    }
+
+    .pokemonContainer {
+        width: 80%;
+    }
+}

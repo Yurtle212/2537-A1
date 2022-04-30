@@ -20,8 +20,10 @@
                         <option value="null">Select Type</option>
                     </select>
                     
-                    <input type="text" id="search" name="search" placeholder="Search by name..." value="" />
-                    <button type="submit">Search</button>
+                    <div>
+                        <input type="text" id="search" name="search" placeholder="Search by name..." value="" />
+                        <button type="submit">Search</button>
+                    </div>
 
                     <select name="history" id="history" onchange="loadSearch();">
                         <option value="null">History</option>
@@ -83,7 +85,7 @@
                 document.querySelector("#ability").value = entry.ability;
                 document.querySelector("#move").value = entry.move;
                 document.querySelector("#type").value = entry.type;
-                displayFiltered();
+                displayFiltered(false);
             }
 
             function search() {
@@ -173,11 +175,14 @@
                 return flag;
             }
 
-            async function displayFiltered() {
+            async function displayFiltered(newEntry=true) {
                 const parent = document.querySelector("#pokemons");
                 purgePokemon(parent);
                 toggleLoader(true);
-                saveSearch();
+
+                if (newEntry) {
+                    saveSearch();
+                }
 
                 let flag = getFlag("#type", "#ability", "#move");
 
