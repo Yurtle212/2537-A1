@@ -41,6 +41,12 @@ function getPokemonsByAbility(ability) {
     return res["pokemon"];
 }
 
+function getPokemonsByMove(move) {
+    let res = getRequest("https://pokeapi.co/api/v2/move/" + move);
+    console.log(res);
+    return res["learned_by_pokemon"];
+}
+
 function getTypeColour(type) {
     const colourDict = {
         "bug": "9cac1e",

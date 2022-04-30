@@ -9,10 +9,13 @@
             <header>
                 <h1><a href="../index.html">PokeAPI Client</a></h1>
                 <form action="pokemon.html">
-                    <select name="abilities" id="ability" onchange="displayByAbility();">
+                    <select name="abilities" id="ability" onchange="displayFiltered();">
                         <option value="null">Select Ability</option>
                     </select>
-                    <select name="types" id="type" onchange="displayByType();">
+                    <select name="moves" id="move" onchange="displayFiltered();">
+                        <option value="null">Select Move</option>
+                    </select>
+                    <select name="types" id="type" onchange="displayFiltered();">
                         <option value="null">Select Type</option>
                     </select>
                     
@@ -73,78 +76,107 @@
 
                 let typesDiv = template.querySelector(".types");
 
+                fillTypes(typesDiv, pokemon);
+                parent.appendChild(template);
+            }
+
+            function fillTypes(parent, pokemon) {
                 for (let i = 0; i < pokemon["types"].length; i++) {
                     let newNode = document.createElement("p");
                     newNode.setAttribute("class", "type");
                     newNode.innerHTML = pokemon["types"][i]["type"]["name"];
                     newNode.setAttribute("style", "background-color:" + getTypeColour(pokemon["types"][i]["type"]["name"]) + ";");
-                    typesDiv.appendChild(newNode);
+                    parent.appendChild(newNode);
+                }
+            }
+
+            function getListIntersect(...lists) {
+                let i = 0;
+                let finalList = [];
+
+                while (finalList.length == 0 && i < lists.length) {
+                    finalList = lists[i];
+                    i++;
+                }
+
+                for (i; i < lists.length; i++) {
+                    if (lists[i].length == 0) { continue; }
+                    finalList = finalList.filter(p => lists[i].map((a) => a.forms[0].name).includes(p.forms[0].name));
                 }
                 
-                parent.appendChild(template)
+                return finalList;
             }
 
-            function getListIntersect(a1, a2) {
-                return a1.filter(p => a2.map((a) => a.species.name).includes(p.species.name));
-            }
-
-            async function displayByType() {
-                const parent = document.querySelector("#pokemons");
-
-                if (document.querySelector("#type").value == "null") { 
-                    allPokemonType = [];
-                    if (document.querySelector("#ability").value == "null") {
-                        window.location.reload();
-                        return;
-                    } else {
-                        displayByAbility();
-                        return;
+            function getFlag(...queries) {
+                let flag = 0;
+                for (let i = 0; i < queries.length; i++) {
+                    if (document.querySelector(queries[i]).value != "null") { 
+                        flag |= 1 << i;
                     }
                 }
 
-                let response = getPokemonsByType(document.querySelector("#type").value);
+                return flag;
+            }
+
+            async function displayFiltered() {
+                const parent = document.querySelector("#pokemons");
                 purgePokemon(parent);
+                
+                let flag = getFlag("#type", "#ability", "#move");
+                console.log(flag & 0b010);
+
+                if ((flag & 0b111) == 0) {
+                    window.location.reload();
+                    return;
+                }
+
+                if ((flag & 0b001) != 0) { // Type
+                    console.log("Type");
+                    getTypePokemon();
+                }
+                if ((flag & 0b010) != 0) { // Ability
+                    console.log("Ability");
+                    getAbilityPokemon();
+                }
+                if ((flag & 0b100) != 0) { // Move
+                    console.log("Move");
+                    getMovePokemon();
+                }
+
+
+                let pIntersect = []
+                pIntersect = getListIntersect(allPokemonType, allPokemonAbility, allPokemonMove);
+
+                for (let i = 0; i < pIntersect.length; i++) {
+                    addPokemon(parent, pIntersect[i]);
+                }
+            }
+
+            async function getMovePokemon() {
+                let response = getPokemonsByMove(document.querySelector("#move").value);
+
+                allPokemonMove = [];
+                for (let i = 0; i < response.length; i++) {
+                    allPokemonMove.push(getRequest(response[i]["url"]));
+                }
+            }
+
+            async function getTypePokemon() {
+                console.log
+                let response = getPokemonsByType(document.querySelector("#type").value);
 
                 allPokemonType = [];
                 for (let i = 0; i < response.length; i++) {
                     allPokemonType.push(getRequest(response[i]["pokemon"]["url"]));
                 }
-
-                let pIntersect = []
-                pIntersect = allPokemonAbility.length == 0 ? allPokemonType : getListIntersect(allPokemonType, allPokemonAbility);
-
-                for (let i = 0; i < pIntersect.length; i++) {
-                    addPokemon(parent, pIntersect[i]);
-                }
             }
 
-            async function displayByAbility() {
-                const parent = document.querySelector("#pokemons");
-
-                if (document.querySelector("#ability").value == "null") { 
-                    allPokemonAbility = [];
-                    if (document.querySelector("#type").value == "null") {
-                        window.location.reload();
-                        return;
-                    } else {
-                        displayByType();
-                        return;
-                    }
-                }
-
+            async function getAbilityPokemon() {
                 let response = getPokemonsByAbility(document.querySelector("#ability").value);
-                purgePokemon(parent);
 
                 allPokemonAbility = [];
                 for (let i = 0; i < response.length; i++) {
                     allPokemonAbility.push(getRequest(response[i]["pokemon"]["url"]));
-                }
-
-                let pIntersect = []
-                pIntersect = allPokemonType.length == 0 ? allPokemonAbility : getListIntersect(allPokemonType, allPokemonAbility);
-
-                for (let i = 0; i < pIntersect.length; i++) {
-                    addPokemon(parent, pIntersect[i]);
                 }
             }
 
@@ -174,11 +206,13 @@
                 return t1.name.localeCompare(t2.name);
             }
 
-            populateSelector(document.querySelector("#ability"), "https://pokeapi.co/api/v2/ability/?limit=999");
-            populateSelector(document.querySelector("#type"), "https://pokeapi.co/api/v2/type/?limit=999");
+            populateSelector(document.querySelector("#ability"), "https://pokeapi.co/api/v2/ability/?limit=9999");
+            populateSelector(document.querySelector("#type"), "https://pokeapi.co/api/v2/type/?limit=9999");
+            populateSelector(document.querySelector("#move"), "https://pokeapi.co/api/v2/move/?limit=9999");
 
             let allPokemonType = [];
             let allPokemonAbility = [];
+            let allPokemonMove = [];
 
             window.onload = function() {
                 if (document.querySelector("#type").value == "null" && document.querySelector("#ability").value == "null") {
