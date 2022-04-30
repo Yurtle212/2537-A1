@@ -28,7 +28,7 @@ form #search {
 }
 
 form button {
-    width: 4%;
+    width: 60px;
     border-radius: 10px;
     color: white;
     background-color: #5769d2;
@@ -46,9 +46,13 @@ form button {
 }
 
 #pokemons {
-    padding-top: 5%;
+    padding: 5%;
+    max-height: 100%;
     display: flex;
     justify-content: space-around;
+    overflow-y: scroll;
+    flex-wrap: wrap;
+    row-gap: 25px;
 }
 
 h1 a {
@@ -68,7 +72,6 @@ h1 a {
     padding: 15px;
     color: #1f2548;
     text-transform: capitalize;
-
     cursor: pointer;
 }
 
@@ -83,4 +86,13 @@ h1 a {
     background-color: white;
     width: 50%;
     margin: auto;
+}
+
+footer {
+    margin-top: auto;
+    background-color: #1f2548;
+    width: 100%;
+    height: 5%;
+    text-align: center;
+    color: #b7c1f6;
 }

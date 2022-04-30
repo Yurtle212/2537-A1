@@ -31,6 +31,10 @@
                 <p class="spd">SPD: </p>
             </div>
         </div>
+
+        <footer>
+            <p>Lachlan Butler - 2022</p>
+        </footer>
     </div>
 
     <script src="./pokeApiStuff.js"></script>
@@ -40,23 +44,37 @@
             window.location.assign("./pokemon.html?search=" + document.querySelector("#search").value);
         }
 
-        const url = "https://pokeapi.co/api/v2/pokemon/";
-        let searchParams = (new URL(document.location)).searchParams;
-        console.log(searchParams);
+        function populatePokemon() {
+            const url = "https://pokeapi.co/api/v2/pokemon/";
+            let searchParams = (new URL(document.location)).searchParams;
 
-        let response = getRequest(url + searchParams.get("search"));
+            console.log(searchParams);
+            if (searchParams.get("search") == "") {
+                window.location.replace("/index.html");
+                return; 
+            }
 
-        document.querySelector(".pokemonArt").setAttribute("src", getPokemonArtUrl(response));
-        document.querySelector(".pokemonName").innerHTML = getPokemonName(response);
+            let response = getRequest(url + searchParams.get("search"));
+            if (response == false) { 
+                window.location.replace("/index.html");
+                return; 
+            }
 
-        let stats = getPokemonStats(response);
-        document.querySelector(".hp").innerHTML += stats[0]["base_stat"];
-        document.querySelector(".att").innerHTML += stats[1]["base_stat"];
-        document.querySelector(".def").innerHTML += stats[2]["base_stat"];
-        document.querySelector(".sat").innerHTML += stats[4]["base_stat"];
-        document.querySelector(".spd").innerHTML += stats[5]["base_stat"];
+            document.querySelector(".pokemonArt").setAttribute("src", getPokemonArtUrl(response));
+            document.querySelector(".pokemonName").innerHTML = getPokemonName(response);
 
-        document.querySelector(".type").innerHTML += response["types"][0]["type"]["name"];
+            let stats = getPokemonStats(response);
+            document.querySelector(".hp").innerHTML += stats[0]["base_stat"];
+            document.querySelector(".att").innerHTML += stats[1]["base_stat"];
+            document.querySelector(".def").innerHTML += stats[2]["base_stat"];
+            document.querySelector(".sat").innerHTML += stats[4]["base_stat"];
+            document.querySelector(".spd").innerHTML += stats[5]["base_stat"];
+
+            document.querySelector(".type").innerHTML += response["types"][0]["type"]["name"];
+        }
+
+        populatePokemon();
+        
     </script>
 </body>
 

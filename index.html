@@ -9,8 +9,15 @@
             <header>
                 <h1><a href="../index.html">PokeAPI Client</a></h1>
                 <form action="pokemon.html">
+                    <select name="abilities" id="ability" onchange="displayByAbility();">
+                        <option value="null">Select Ability</option>
+                    </select>
+                    <select name="types" id="type" onchange="displayByType();">
+                        <option value="null">Select Type</option>
+                    </select>
+                    
                     <input type="text" id="search" name="search" placeholder="Search by name..." value="" />
-                    <button type="button" onclick="window.search()">Search</button>
+                    <button type="submit">Search</button>
                 </form>
             </header>
             <div id="pokemons">
@@ -19,7 +26,7 @@
                     <img class="pokemonArt"/>
                     <div class="pokemonStats">
                         <div class="types">
-                            <p class="type">TYPE: </p><br><br>
+                            <p class="type">PRIMARY TYPE: </p><br><br>
                         </div>
                         <p class="hp">HP: </p>
                         <p class="att">ATT: </p>
@@ -33,7 +40,7 @@
                     <img class="pokemonArt"/>
                     <div class="pokemonStats">
                         <div class="types">
-                            <p class="type">TYPE: </p><br><br>
+                            <p class="type">PRIMARY TYPE: </p><br><br>
                         </div>
                         <p class="hp">HP: </p>
                         <p class="att">ATT: </p>
@@ -47,7 +54,7 @@
                     <img class="pokemonArt"/>
                     <div class="pokemonStats">
                         <div class="types">
-                            <p class="type">TYPE: </p><br><br>
+                            <p class="type">PRIMARY TYPE: </p><br><br>
                         </div>
                         <p class="hp">HP: </p>
                         <p class="att">ATT: </p>
@@ -57,6 +64,25 @@
                     </div>
                 </div>
             </div>
+            <template id="pokemonContainerTemplate">
+                <div class="pokemonContainer" onclick="search(this.querySelector('.pokemonName').innerHTML)">
+                    <h2 class="pokemonName"></h2>
+                    <img class="pokemonArt"/>
+                    <div class="pokemonStats">
+                        <div class="types">
+                            <p class="type">PRIMARY TYPE: </p><br><br>
+                        </div>
+                        <p class="hp">HP: </p>
+                        <p class="att">ATT: </p>
+                        <p class="def">DEF: </p>
+                        <p class="sat">SAT: </p>
+                        <p class="spd">SPD: </p>
+                    </div>
+                </div>
+            </template>
+            <footer>
+                <p>Lachlan Butler - 2022</p>
+            </footer>
         </div>
         <script src="./pokeApiStuff.js"></script>
         <script>
@@ -89,7 +115,89 @@
                 }
             }
 
-            fillRandomPokemons();
+            function purgePokemon(parent) {
+                const nodes = document.querySelectorAll(".pokemonContainer");
+                console.log(nodes);
+                for (let i = 0; i < nodes.length; i++) {
+                    parent.removeChild(nodes[i]);
+                }
+            }
+
+            function addPokemon(parent, pokemon) {
+                let template = document.querySelector("#pokemonContainerTemplate").content.cloneNode(true);
+                
+                template.querySelector(".pokemonArt").setAttribute("src", getPokemonArtUrl(pokemon));
+                template.querySelector(".pokemonName").innerHTML = getPokemonName(pokemon);
+
+                let stats = getPokemonStats(pokemon);
+                template.querySelector(".hp").innerHTML += stats[0]["base_stat"];
+                template.querySelector(".att").innerHTML += stats[1]["base_stat"];
+                template.querySelector(".def").innerHTML += stats[2]["base_stat"];
+                template.querySelector(".sat").innerHTML += stats[4]["base_stat"];
+                template.querySelector(".spd").innerHTML += stats[5]["base_stat"];
+
+                template.querySelector(".type").innerHTML += pokemon["types"][0]["type"]["name"];
+
+                parent.appendChild(template)
+            }
+
+            async function displayByType() {
+                const parent = document.querySelector("#pokemons");
+                let response = getPokemonsByType(document.querySelector("#type").value);
+                purgePokemon(parent);
+
+                for (let i = 0; i < response.length; i++) {
+                    addPokemon(parent, getRequest(response[i]["pokemon"]["url"]));
+                }
+            }
+
+            async function displayByAbility() {
+                const parent = document.querySelector("#pokemons");
+                let response = getPokemonsByAbility(document.querySelector("#ability").value);
+                console.log(response)
+                purgePokemon(parent);
+
+                for (let i = 0; i < response.length; i++) {
+                    addPokemon(parent, getRequest(response[i]["pokemon"]["url"]));
+                }
+            }
+
+            function populateSelector(parent, url) {
+                const response = getRequest(url);
+
+                let allEntries = [];
+                for (let i = 0; i < response.count; i++) {
+                    allEntries.push(response["results"][i]);
+                }
+                allEntries.sort(compareThings);
+
+                for (let i = 0; i < allEntries.length; i++) {
+                    let newNode = document.createElement("option");
+                    newNode.value = allEntries[i].name;
+                    newNode.innerHTML = toTitleCase(allEntries[i].name);
+                    parent.appendChild(newNode);
+                }
+            }
+
+            function toTitleCase(str) {
+                return str.toLowerCase().replace(/\b(\w)/g, s => s.toUpperCase());
+            }
+
+            function compareThings(t1, t2) {
+                return t1.name.localeCompare(t2.name);
+            }
+
+            populateSelector(document.querySelector("#ability"), "https://pokeapi.co/api/v2/ability/?limit=999");
+            populateSelector(document.querySelector("#type"), "https://pokeapi.co/api/v2/type/?limit=999");
+
+            window.onload = function() {
+                if (document.querySelector("#type").value == "null") {
+                    fillRandomPokemons();
+                } else {
+                    displayByType();
+                }
+                console.log(document.querySelector("#type").value)
+            }
         </script>
     </body>
 </html>

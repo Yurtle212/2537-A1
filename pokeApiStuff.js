@@ -2,6 +2,9 @@ function getRequest(url) {
     let xmlHttp = new XMLHttpRequest();
     xmlHttp.open("GET", url, false);
     xmlHttp.send(null);
+    if (xmlHttp.responseText[0] == 'N') {
+        return false;
+    }
     return JSON.parse(xmlHttp.responseText);
 }
 
@@ -26,4 +29,14 @@ function getPokemonStats(json) {
 function validatePokemon(name) {
     let res = getRequest("https://pokeapi.co/api/v2/pokemon/" + name);
     return res == null ? false : true;
+}
+
+function getPokemonsByType(type) {
+    let res = getRequest("https://pokeapi.co/api/v2/type/" + type);
+    return res["pokemon"];
+}
+
+function getPokemonsByAbility(ability) {
+    let res = getRequest("https://pokeapi.co/api/v2/ability/" + ability);
+    return res["pokemon"];
 }
