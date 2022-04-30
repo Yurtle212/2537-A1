@@ -40,3 +40,29 @@ function getPokemonsByAbility(ability) {
     let res = getRequest("https://pokeapi.co/api/v2/ability/" + ability);
     return res["pokemon"];
 }
+
+function getTypeColour(type) {
+    const colourDict = {
+        "bug": "9cac1e",
+        "dark": "413325",
+        "dragon": "503ca9",
+        "electric": "ffbd14",
+        "fairy": "f6b1f6",
+        "fighting": "4a1101",
+        "fire": "c32406",
+        "flying": "8c9eef",
+        "ghost": "5a5b9a",
+        "grass": "87ce4e",
+        "ground": "d0b467",
+        "ice": "6dd3f5",
+        "normal": "c8c2b9",
+        "poison": "824385",
+        "psychic": "df4e7f",
+        "rock": "9e8645",
+        "steel": "908da3",
+        "water": "4091de",
+        "unknown": "68a090"
+    }
+
+    return "#" + colourDict[type.toLowerCase()];
+}

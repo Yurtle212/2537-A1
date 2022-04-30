@@ -21,65 +21,18 @@
                 </form>
             </header>
             <div id="pokemons">
-                <div class="pokemonContainer" onclick="search(this.querySelector('.pokemonName').innerHTML)">
-                    <h2 class="pokemonName"></h2>
-                    <img class="pokemonArt"/>
-                    <div class="pokemonStats">
-                        <div class="types">
-                            <p class="type">PRIMARY TYPE: </p><br><br>
-                        </div>
-                        <p class="hp">HP: </p>
-                        <p class="att">ATT: </p>
-                        <p class="def">DEF: </p>
-                        <p class="sat">SAT: </p>
-                        <p class="spd">SPD: </p>
-                    </div>
-                </div>
-                <div class="pokemonContainer" onclick="search(this.querySelector('.pokemonName').innerHTML)">
-                    <h2 class="pokemonName"></h2>
-                    <img class="pokemonArt"/>
-                    <div class="pokemonStats">
-                        <div class="types">
-                            <p class="type">PRIMARY TYPE: </p><br><br>
-                        </div>
-                        <p class="hp">HP: </p>
-                        <p class="att">ATT: </p>
-                        <p class="def">DEF: </p>
-                        <p class="sat">SAT: </p>
-                        <p class="spd">SPD: </p>
-                    </div>
-                </div>
-                <div class="pokemonContainer" onclick="search(this.querySelector('.pokemonName').innerHTML)">
-                    <h2 class="pokemonName"></h2>
-                    <img class="pokemonArt"/>
-                    <div class="pokemonStats">
-                        <div class="types">
-                            <p class="type">PRIMARY TYPE: </p><br><br>
-                        </div>
-                        <p class="hp">HP: </p>
-                        <p class="att">ATT: </p>
-                        <p class="def">DEF: </p>
-                        <p class="sat">SAT: </p>
-                        <p class="spd">SPD: </p>
-                    </div>
-                </div>
-            </div>
             <template id="pokemonContainerTemplate">
                 <div class="pokemonContainer" onclick="search(this.querySelector('.pokemonName').innerHTML)">
                     <h2 class="pokemonName"></h2>
                     <img class="pokemonArt"/>
                     <div class="pokemonStats">
                         <div class="types">
-                            <p class="type">PRIMARY TYPE: </p><br><br>
+
                         </div>
-                        <p class="hp">HP: </p>
-                        <p class="att">ATT: </p>
-                        <p class="def">DEF: </p>
-                        <p class="sat">SAT: </p>
-                        <p class="spd">SPD: </p>
                     </div>
                 </div>
             </template>
+            </div>
             <footer>
                 <p>Lachlan Butler - 2022</p>
             </footer>
@@ -98,20 +51,10 @@
             function fillRandomPokemons() {
                 response = getRandomPokemon();
 
-                let pokes = document.querySelectorAll(".pokemonContainer");
-                for (let i = 0; i < 3; i++) {
+                let parent = document.querySelector("#pokemons");
+                for (let i = 0; i < 9; i++) {
                     response = getRandomPokemon();
-                    pokes[i].querySelector(".pokemonArt").setAttribute("src", getPokemonArtUrl(response));
-                    pokes[i].querySelector(".pokemonName").innerHTML = getPokemonName(response);
-
-                    let stats = getPokemonStats(response);
-                    pokes[i].querySelector(".hp").innerHTML += stats[0]["base_stat"];
-                    pokes[i].querySelector(".att").innerHTML += stats[1]["base_stat"];
-                    pokes[i].querySelector(".def").innerHTML += stats[2]["base_stat"];
-                    pokes[i].querySelector(".sat").innerHTML += stats[4]["base_stat"];
-                    pokes[i].querySelector(".spd").innerHTML += stats[5]["base_stat"];
-
-                    pokes[i].querySelector(".type").innerHTML += response["types"][0]["type"]["name"];
+                    addPokemon(parent, response);
                 }
             }
 
@@ -128,15 +71,16 @@
                 template.querySelector(".pokemonArt").setAttribute("src", getPokemonArtUrl(pokemon));
                 template.querySelector(".pokemonName").innerHTML = getPokemonName(pokemon);
 
-                let stats = getPokemonStats(pokemon);
-                template.querySelector(".hp").innerHTML += stats[0]["base_stat"];
-                template.querySelector(".att").innerHTML += stats[1]["base_stat"];
-                template.querySelector(".def").innerHTML += stats[2]["base_stat"];
-                template.querySelector(".sat").innerHTML += stats[4]["base_stat"];
-                template.querySelector(".spd").innerHTML += stats[5]["base_stat"];
+                let typesDiv = template.querySelector(".types");
 
-                template.querySelector(".type").innerHTML += pokemon["types"][0]["type"]["name"];
-
+                for (let i = 0; i < pokemon["types"].length; i++) {
+                    let newNode = document.createElement("p");
+                    newNode.setAttribute("class", "type");
+                    newNode.innerHTML = pokemon["types"][i]["type"]["name"];
+                    newNode.setAttribute("style", "background-color:" + getTypeColour(pokemon["types"][i]["type"]["name"]) + ";");
+                    typesDiv.appendChild(newNode);
+                }
+                
                 parent.appendChild(template)
             }
 

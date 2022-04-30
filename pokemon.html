@@ -22,7 +22,7 @@
             <img class="pokemonArt" />
             <div class="pokemonStats">
                 <div class="types">
-                    <p class="type">TYPE: </p><br><br>
+
                 </div>
                 <p class="hp">HP: </p>
                 <p class="att">ATT: </p>
@@ -70,7 +70,15 @@
             document.querySelector(".sat").innerHTML += stats[4]["base_stat"];
             document.querySelector(".spd").innerHTML += stats[5]["base_stat"];
 
-            document.querySelector(".type").innerHTML += response["types"][0]["type"]["name"];
+            let typesDiv = document.querySelector(".types");
+
+            for (let i = 0; i < response["types"].length; i++) {
+                let newNode = document.createElement("p");
+                newNode.setAttribute("class", "type");
+                newNode.innerHTML = response["types"][i]["type"]["name"];
+                newNode.setAttribute("style", "background-color:" + getTypeColour(response["types"][i]["type"]["name"]) + ";");
+                typesDiv.appendChild(newNode);
+            }
         }
 
         populatePokemon();
