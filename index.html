@@ -127,7 +127,6 @@
                 purgePokemon(parent);
 
                 let flag = getFlag("#type", "#ability", "#move");
-                console.log(flag & 0b010);
 
                 if ((flag & 0b111) == 0) {
                     window.location.reload();
@@ -135,16 +134,19 @@
                 }
 
                 if ((flag & 0b001) != 0) { // Type
-                    //console.log("Type");
                     await getTypePokemon();
+                } else {
+                    allPokemonType = [];
                 }
                 if ((flag & 0b010) != 0) { // Ability
-                    //console.log("Ability");
                     await getAbilityPokemon();
+                } else {
+                    allPokemonAbility = [];
                 }
                 if ((flag & 0b100) != 0) { // Move
-                    //console.log("Move");
                     await getMovePokemon();
+                } else {
+                    allPokemonMove = [];
                 }
 
 
@@ -154,13 +156,11 @@
                 for (let i = 0; i < pIntersect.length; i++) {
                     await addPokemon(parent, pIntersect[i]);
                 }
-                console.log("Burh");
             }
 
             function getMovePokemon() {
                 return new Promise(resolve => {
                     async function doStuff() {
-                        console.log("Move")
                         let response = getPokemonsByMove(document.querySelector("#move").value);
 
                         allPokemonMove = [];
@@ -176,13 +176,11 @@
             function getTypePokemon() {
                 return new Promise(resolve => {
                     async function doStuff() {
-                        console.log("Type")
                         let response = getPokemonsByType(document.querySelector("#type").value);
 
                         allPokemonType = [];
                         for (let i = 0; i < response.length; i++) {
                             allPokemonType.push(await getRequestAsync(response[i]["pokemon"]["url"]));
-                            //allPokemonType.push(getRequest(response[i]["pokemon"]["url"]));
                         }
                         resolve(true);
                     }
@@ -193,7 +191,6 @@
             function getAbilityPokemon() {
                 return new Promise(resolve => {
                     async function doStuff() {
-                        console.log("Ability")
                         let response = getPokemonsByAbility(document.querySelector("#ability").value);
 
                         allPokemonAbility = [];
@@ -215,11 +212,10 @@
             let allPokemonMove = [];
 
             window.onload = function() {
-                if (document.querySelector("#type").value == "null" && document.querySelector("#ability").value == "null") {
+                if (document.querySelector("#type").value == "null" && document.querySelector("#ability").value == "null" && document.querySelector("#move").value == "null") {
                     fillRandomPokemons();
                 } else {
-                    displayByType();
-                    displayByAbility();
+                    displayFiltered();
                 }
             }
         </script>

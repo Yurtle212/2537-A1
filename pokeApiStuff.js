@@ -54,7 +54,6 @@ function getPokemonsByAbility(ability) {
 
 function getPokemonsByMove(move) {
     let res = getRequest("https://pokeapi.co/api/v2/move/" + move);
-    console.log(res);
     return res["learned_by_pokemon"];
 }
 
