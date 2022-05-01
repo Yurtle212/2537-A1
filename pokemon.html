@@ -90,7 +90,6 @@
             const url = "https://pokeapi.co/api/v2/pokemon/";
             let searchParams = (new URL(document.location)).searchParams;
 
-            console.log(searchParams);
             if (searchParams.get("search") == "") {
                 window.location.replace("/index.html");
                 return; 

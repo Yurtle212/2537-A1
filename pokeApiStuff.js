@@ -71,7 +71,6 @@ function getAbilityDescription(url) {
     return new Promise(resolve => {
         async function doIt() {
             let res = await getRequestAsync(url);
-            console.log(res);
             for (let i = 0; i < res.flavor_text_entries.length; i++) {
                 if (res.flavor_text_entries[i].language.name == "en") {
                     resolve(res.flavor_text_entries[i].flavor_text);
