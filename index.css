@@ -25,7 +25,7 @@ header form {
 }
 
 form #search {
-    width: 30%;
+    width: 80%;
     height: 25px;
     border-radius: 10px;
 }
@@ -36,6 +36,10 @@ form button {
     color: white;
     background-color: #5769d2;
     border-color: #ffffff;
+}
+
+form div {
+    width: 30%;
 }
 
 form select {
@@ -162,8 +166,12 @@ option {
         height: 40px;
     }
 
+    form div {
+        width: 100%;
+    }
+
     form #search {
-        width: 80%;
+        width: 75%;
         height: 25px;
         border-radius: 10px;
     }
