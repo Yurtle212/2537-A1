@@ -102,13 +102,13 @@
                 loader.setAttribute("style", "display: " + (enabled ? "block" : "none") + ";");
             }
 
-            function fillRandomPokemons() {
-                response = getRandomPokemon();
+            async function fillRandomPokemons() {
+                let pokes = await getRequestAsync("https://pokeapi.co/api/v2/pokemon/?limit=" + "9999");
 
                 let parent = document.querySelector("#pokemons");
                 toggleLoader(false);
                 for (let i = 0; i < 9; i++) {
-                    response = getRandomPokemon();
+                    let response = await getRandomPokemon(pokes);
                     addPokemon(parent, response);
                 }
             }

@@ -19,10 +19,16 @@ async function getRequestAsync(url) {
     });
 }
 
-function getRandomPokemon() {
-    const pokemonAmount = 898;
-    let res = getRequest("https://pokeapi.co/api/v2/pokemon/" + Math.floor(Math.random() * pokemonAmount));
-    return res;
+async function getRandomPokemon(data) {
+    return new Promise(resolve => {
+        async function doIt() {
+            let randomPokemon = data.results[Math.floor(Math.random() * data.results.length)]
+            let res = await getRequestAsync(randomPokemon.url);
+            
+            resolve(res);
+        }
+        doIt();
+    });
 }
 
 function getPokemonArtUrl(json) {
